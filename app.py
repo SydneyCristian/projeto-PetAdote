@@ -1,23 +1,35 @@
-from flask import *
-from blueprints.login_loja import bp_loja
-from extensao import bd
+from flask import Flask, render_template
+from blueprints.login_usuario import bp_usuario
+from blueprints.animal import bp_animal
+from extensao import bd, login_manager
+from models.usuario import Usuario
+
 
 def criar_servidor():
     app = Flask(__name__)
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost:5432/projetoinfoesociedade'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-    app.config['SQLALCHEMY_ECHO'] = True
+    app.config['SECRET_KEY'] = 'troque-isso-em-producao'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ECHO'] = False
+
     bd.init_app(app)
 
+    login_manager.init_app(app)
+    login_manager.login_view = 'login_usuario.login'
+    login_manager.login_message = 'Faça login para acessar essa página.'
 
-    app.register_blueprint(bp_loja)
-    
+
+    @login_manager.user_loader
+    def carregar_usuario(usuario_id):
+        return bd.session.get(Usuario, int(usuario_id))
+
+    app.register_blueprint(bp_usuario)
+    app.register_blueprint(bp_animal)
 
     @app.route('/')
     def pagina_inicial():
-        return render_template('login_loja.html')
-    
+        return render_template('login_usuario.html')
 
     return app
 
@@ -27,4 +39,3 @@ if __name__ == '__main__':
     with app.app_context():
         bd.create_all()
     app.run(debug=True)
-        

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAdote — Animais para Adoção</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('animal.listar') }}" style="text-decoration:none; display:flex; align-items:center; gap:0.5rem;">
+                <span class="paw">🐾</span>
+                <span class="brand-name">PetAdote</span>
+            </a>
+        </div>
+        <div class="nav-links">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('animal.cadastrar') }}" class="nav-link nav-add">+ Cadastrar Animal</a>
+                <a href="{{ url_for('login_usuario.logout') }}" class="nav-link nav-logout">Sair</a>
+            {% else %}
+                <a href="{{ url_for('login_usuario.login') }}" class="nav-link nav-cta">Entrar / Cadastrar</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <p class="hero-tag">Adoção responsável</p>
+            <h1 class="hero-title">Encontre seu<br><em>companheiro perfeito</em></h1>
+            <p class="hero-desc">Cada animal aqui espera por um lar cheio de carinho. Você pode ser a mudança na vida deles.</p>
+        </div>
+        <div class="hero-decoration">
+            <span class="deco-emoji">🐶</span>
+            <span class="deco-emoji">🐱</span>
+            <span class="deco-emoji">🐰</span>
+        </div>
+    </section>
+
+    <!-- Grid de animais -->
+    <section class="animals-section">
+        <div class="section-header">
+            <h2 class="section-title">Animais disponíveis</h2>
+            <p class="section-sub">{{ animais|length if animais else 0 }} animais esperando por você</p>
+        </div>
+
+        {% if animais %}
+        <div class="animals-grid">
+            {% for animal in animais %}
+            <div class="animal-card" style="--delay: {{ loop.index0 * 0.1 }}s">
+                <div class="animal-card-header">
+                    <div class="animal-emoji">
+                        {% if animal.especie and 'gato' in animal.especie.lower() %}🐱
+                        {% elif animal.especie and 'cachorro' in animal.especie.lower() %}🐶
+                        {% elif animal.especie and 'coelho' in animal.especie.lower() %}🐰
+                        {% elif animal.especie and 'pássaro' in animal.especie.lower() or animal.especie and 'ave' in animal.especie.lower() %}🦜
+                        {% else %}🐾
+                        {% endif %}
+                    </div>
+                    <span class="animal-status disponivel">Disponível</span>
+                </div>
+
+                <div class="animal-card-body">
+                    <h3 class="animal-name">{{ animal.nome }}</h3>
+
+                    <div class="animal-tags">
+                        {% if animal.especie %}
+                        <span class="tag">{{ animal.especie }}</span>
+                        {% endif %}
+                        {% if animal.raca %}
+                        <span class="tag">{{ animal.raca }}</span>
+                        {% endif %}
+                        {% if animal.idade %}
+                        <span class="tag">{{ animal.idade }} ano{% if animal.idade != 1 %}s{% endif %}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if animal.descricao %}
+                    <p class="animal-desc">{{ animal.descricao }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="animal-card-footer">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('animal.adotar', id=animal.id) }}" class="btn-adopt"
+                       onclick="return confirm('Deseja adotar {{ animal.nome }}? 🐾')">
+                        Quero adotar
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('login_usuario.login') }}" class="btn-adopt btn-adopt--guest">
+                        Entre para adotar
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">🐾</span>
+            <h3 class="empty-title">Nenhum animal disponível no momento</h3>
+            <p class="empty-sub">Volte em breve ou cadastre um animal para adoção.</p>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('animal.cadastrar') }}" class="btn-primary" style="display:inline-block; margin-top:1.5rem;">
+                + Cadastrar Animal
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </section>
+
+    <footer class="footer">
+        <p>🐾 PetAdote — Todo animal merece um lar cheio de amor.</p>
+    </footer>
+
+</body>
+</html>

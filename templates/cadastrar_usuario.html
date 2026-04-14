@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAdote — Criar Conta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .alerta { display:flex; align-items:flex-start; gap:.75rem; padding:.9rem 1rem; border-radius:10px; margin-bottom:1.25rem; animation:fadeIn .3s ease; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+        .alerta-error { background:#FEF2F2; border:1.5px solid #FECACA; }
+        .alerta-icone { font-size:1.1rem; flex-shrink:0; margin-top:.1rem; }
+        .alerta-texto { font-size:.875rem; line-height:1.5; }
+        .alerta-texto strong { display:block; color:#991B1B; margin-bottom:.2rem; }
+        .alerta-texto p { color:#6B4C3B; margin:0; }
+    </style>
+</head>
+<body class="auth-page">
+
+    <div class="auth-container">
+        <!-- Lado esquerdo: decorativo -->
+        <div class="auth-visual auth-visual--register">
+            <div class="visual-overlay"></div>
+            <div class="visual-content">
+                <div class="visual-paw">🐾</div>
+                <h1 class="visual-title">Faça parte<br><em>dessa história.</em></h1>
+                <p class="visual-subtitle">Cadastre-se e ajude um animal a encontrar sua família.</p>
+
+                <div class="benefit-list">
+                    <div class="benefit-item">✓ Cadastre animais para adoção</div>
+                    <div class="benefit-item">✓ Acompanhe adoções realizadas</div>
+                    <div class="benefit-item">✓ Ajude a mudar vidas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lado direito: formulário -->
+        <div class="auth-form-side">
+            <div class="auth-form-box">
+                <div class="form-header">
+                    <span class="form-logo">🐾</span>
+                    <h2 class="form-title">Criar conta</h2>
+                    <p class="form-sub">Preencha os dados abaixo para começar</p>
+                </div>
+
+                {% with mensagens = get_flashed_messages(with_categories=true) %}
+                    {% for categoria, mensagem in mensagens %}
+                    <div class="alerta alerta-{{ categoria }}">
+                        <span class="alerta-icone">⚠️</span>
+                        <div class="alerta-texto"><strong>{{ mensagem }}</strong></div>
+                    </div>
+                    {% endfor %}
+                {% endwith %}
+
+                <form action="{{ url_for('login_usuario.cadastrar') }}" method="POST" class="form">
+                    <div class="field">
+                        <label for="nome" class="label">Nome completo</label>
+                        <input
+                            type="text"
+                            id="nome"
+                            name="nome"
+                            placeholder="Seu nome"
+                            class="input"
+                            required
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="email" class="label">E-mail</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="seu@email.com"
+                            class="input"
+                            required
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="telefone" class="label">Telefone</label>
+                        <input
+                            type="tel"
+                            id="telefone"
+                            name="telefone"
+                            placeholder="(00) 00000-0000"
+                            class="input"
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="senha" class="label">Senha</label>
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            placeholder="Mínimo 6 caracteres"
+                            class="input"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-primary">Criar conta</button>
+                </form>
+
+                <div class="form-divider">
+                    <span>Já tem uma conta?</span>
+                </div>
+
+                <a href="{{ url_for('login_usuario.login') }}" class="btn-secondary">Entrar</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

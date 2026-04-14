@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAdote — Entrar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .alerta { display:flex; align-items:flex-start; gap:.75rem; padding:.9rem 1rem; border-radius:10px; margin-bottom:1.25rem; animation:fadeIn .3s ease; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+        .alerta-error { background:#FEF2F2; border:1.5px solid #FECACA; }
+        .alerta-success { background:#F0FDF4; border:1.5px solid #BBF7D0; }
+        .alerta-icone { font-size:1.1rem; flex-shrink:0; margin-top:.1rem; }
+        .alerta-texto { font-size:.875rem; line-height:1.5; }
+        .alerta-texto strong { display:block; color:#991B1B; margin-bottom:.2rem; }
+        .alerta-success .alerta-texto strong { color:#166534; }
+        .alerta-texto p { color:#6B4C3B; margin:0; }
+        .alerta-link { color:#C4704A; font-weight:600; text-decoration:none; }
+        .alerta-link:hover { text-decoration:underline; }
+    </style>
+</head>
+<body class="auth-page">
+
+    <div class="auth-container">
+        <!-- Lado esquerdo: decorativo -->
+        <div class="auth-visual">
+            <div class="visual-overlay"></div>
+            <div class="visual-content">
+                <div class="visual-paw">🐾</div>
+                <h1 class="visual-title">Todo animal<br><em>merece amor.</em></h1>
+                <p class="visual-subtitle">Conectando corações a patinhas que precisam de um lar.</p>
+
+                <div class="stats-row">
+                    <div class="stat">
+                        <span class="stat-num">120+</span>
+                        <span class="stat-label">Adoções</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num">50+</span>
+                        <span class="stat-label">Animais</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num">∞</span>
+                        <span class="stat-label">Amor</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lado direito: formulário -->
+        <div class="auth-form-side">
+            <div class="auth-form-box">
+                <div class="form-header">
+                    <span class="form-logo">🐾</span>
+                    <h2 class="form-title">Bem-vindo de volta</h2>
+                    <p class="form-sub">Entre para ver os animais disponíveis para adoção</p>
+                </div>
+
+                {% with mensagens = get_flashed_messages(with_categories=true) %}
+                    {% for categoria, mensagem in mensagens %}
+                    <div class="alerta alerta-{{ categoria }}">
+                        <span class="alerta-icone">{% if categoria == 'error' %}⚠️{% else %}✅{% endif %}</span>
+                        <div class="alerta-texto">
+                            <strong>{{ mensagem }}</strong>
+                            {% if categoria == 'error' %}
+                            <p>Ainda não tem conta? <a href="{{ url_for('login_usuario.cadastrar') }}" class="alerta-link">Crie sua conta gratuitamente →</a></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endwith %}
+
+                <form action="{{ url_for('login_usuario.login') }}" method="POST" class="form">
+                    <div class="field">
+                        <label for="email" class="label">E-mail</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="seu@email.com"
+                            class="input"
+                            required
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="senha" class="label">Senha</label>
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            placeholder="••••••••"
+                            class="input"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-primary">Entrar</button>
+                </form>
+
+                <div class="form-divider">
+                    <span>Não tem conta?</span>
+                </div>
+
+                <a href="{{ url_for('login_usuario.cadastrar') }}" class="btn-secondary">Criar conta gratuita</a>
+
+                <a href="{{ url_for('animal.listar') }}" class="link-subtle">Continuar como visitante →</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
