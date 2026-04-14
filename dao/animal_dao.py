@@ -8,8 +8,15 @@ class AnimalDao:
 
 
 
-    def cadastrar(self, nome, raca, idade, descricao, usuario_id):
-        animal = Animal(nome=nome, raca=raca, idade=idade, descricao=descricao, usuario_id=usuario_id)
+    def cadastrar(self, nome, especie, raca, idade, descricao, usuario_id):
+        animal = Animal(
+            nome=nome,
+            especie=especie,
+            raca=raca,
+            idade=idade,
+            descricao=descricao,
+            usuario_id=usuario_id
+        )
 
         try:
             self.bd.session.add(animal)

@@ -37,9 +37,9 @@ def cadastrar():
     senha = request.form.get('senha')
     telefone = request.form.get('telefone')
 
-    saida = usuario_dao.cadastrar_usuario(nome, email, senha, telefone)
+    saida = usuario_dao.cadastrar(nome, email, senha, telefone)
     if saida:
-        flash('Conta criada com sucesso! Faça login para continuar.', 'success')
+        flash('Conta criada com sucesso! Faça login para continuar.', 'sucesso')
         return redirect(url_for('login_usuario.login'))  
     else:
         flash('Não foi possível criar a conta. O e-mail pode já estar em uso.', 'error')
