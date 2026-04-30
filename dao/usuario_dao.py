@@ -28,8 +28,9 @@ class UsuarioDao:
     
 
     def buscar_por_id(self, id):
-        return Usuario.query.get(id)
+        return bd.session.get(Usuario, id)
     
+
     def atualizar(self, id, nome, email, telefone):
         usuario = self.buscar_por_id(id)
         if usuario:
@@ -37,6 +38,18 @@ class UsuarioDao:
             usuario.email = email
             usuario.telefone = telefone
             try:
+                self.bd.session.commit()
+                return True
+            except Exception as e:
+                print(e)
+                self.bd.session.rollback()
+        return False
+
+    def atualizar_senha(self, id, nova_senha):
+        usuario = self.buscar_por_id(id)
+        if usuario:
+            try:
+                usuario.senha = nova_senha
                 self.bd.session.commit()
                 return True
             except Exception as e:

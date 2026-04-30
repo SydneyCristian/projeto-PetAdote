@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAdote — Solicitar Adoção</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('animal.listar') }}" class="brand-link">
+                <span class="paw">🐾</span>
+                <span class="brand-name">PetAdote</span>
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('animal.listar') }}" class="nav-link">← Voltar</a>
+        </div>
+    </nav>
+
+    <div class="register-page">
+        <div class="register-left">
+            <div class="register-info">
+                <span class="register-icon">
+                    {% if animal.especie and 'gato' in animal.especie.lower() %}🐱
+                    {% elif animal.especie and 'cachorro' in animal.especie.lower() %}🐶
+                    {% else %}🐾{% endif %}
+                </span>
+                <h2 class="register-title">Adotar<br><em>{{ animal.nome }}</em></h2>
+                <p class="register-desc">Preencha o formulário abaixo. O responsável pelo animal analisará sua solicitação e entrará em contato.</p>
+
+                <div class="register-tips">
+                    <h4 class="tips-title">Sobre {{ animal.nome }}</h4>
+                    <ul class="tips-list">
+                        {% if animal.especie %}<li>Espécie: {{ animal.especie }}</li>{% endif %}
+                        {% if animal.raca %}<li>Raça: {{ animal.raca }}</li>{% endif %}
+                        {% if animal.idade %}<li>Idade: {{ animal.idade }} ano{% if animal.idade != 1 %}s{% endif %}</li>{% endif %}
+                        {% if animal.descricao %}<li>{{ animal.descricao }}</li>{% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="register-right">
+            <div class="register-form-box">
+                <h3 class="form-box-title">Requisitos para adoção</h3>
+                <p style="font-size:.9rem; color:var(--muted); margin-bottom:1.5rem;">
+                    Responda com sinceridade — isso ajuda o responsável a tomar a melhor decisão para o animal.
+                </p>
+
+                <form action="{{ url_for('animal.solicitar_adocao', id=animal.id) }}" method="POST" class="form">
+
+                    <div class="field">
+                        <label class="label">Você tem espaço adequado para o animal? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="tem_espaco" value="sim" required> Sim, tenho espaço suficiente
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="tem_espaco" value="nao"> Não, meu espaço é limitado
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Você tem tempo disponível para cuidar do animal? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="tem_tempo" value="sim" required> Sim, tenho tempo para dedicar
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="tem_tempo" value="nao"> Minha rotina é muito agitada
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Você tem condições financeiras para manter o animal (vet, ração, etc.)? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="tem_condicoes" value="sim" required> Sim, consigo arcar com os custos
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="tem_condicoes" value="nao"> Tenho dificuldades financeiras
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="mensagem" class="label">Mensagem para o responsável (opcional)</label>
+                        <textarea id="mensagem" name="mensagem" class="input input-textarea" rows="4"
+                            placeholder="Conte um pouco sobre você, sua família, sua casa... Por que você quer adotar {{ animal.nome }}?"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{{ url_for('animal.listar') }}" class="btn-cancel">Cancelar</a>
+                        <button type="submit" class="btn-primary">Enviar solicitação 🐾</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>🐾 PetAdote — Todo animal merece um lar cheio de amor.</p>
+    </footer>
+</body>
+</html>

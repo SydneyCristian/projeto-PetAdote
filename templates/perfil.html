@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAdote — Meu Perfil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('animal.listar') }}" class="brand-link">
+                <span class="paw">🐾</span>
+                <span class="brand-name">PetAdote</span>
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('animal.listar') }}" class="nav-link">← Voltar</a>
+            <a href="{{ url_for('login_usuario.logout') }}" class="nav-link nav-logout">Sair</a>
+        </div>
+    </nav>
+
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in msgs %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="perfil-page">
+
+        <!-- ── Coluna esquerda: dados do usuário ── -->
+        <aside class="perfil-sidebar">
+            <div class="perfil-card">
+                <div class="perfil-avatar-big">{{ current_user.nome[0].upper() }}</div>
+                <h2 class="perfil-nome">{{ current_user.nome }}</h2>
+                <p class="perfil-email">{{ current_user.email }}</p>
+                {% if current_user.telefone %}
+                <p class="perfil-tel">📞 {{ current_user.telefone }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Formulário de edição -->
+            <div class="perfil-card" id="editar-dados">
+                <h3 class="perfil-section-title">Editar dados</h3>
+                <form action="{{ url_for('perfil.editar') }}" method="POST" class="form">
+                    <div class="field">
+                        <label class="label">Nome</label>
+                        <input type="text" name="nome" value="{{ current_user.nome }}" class="input" required>
+                    </div>
+                    <div class="field">
+                        <label class="label">E-mail</label>
+                        <input type="email" name="email" value="{{ current_user.email }}" class="input" required>
+                    </div>
+                    <div class="field">
+                        <label class="label">Telefone</label>
+                        <input type="tel" name="telefone" value="{{ current_user.telefone or '' }}" class="input" placeholder="(00) 00000-0000">
+                    </div>
+                    <div class="perfil-divider-label">Trocar senha (opcional)</div>
+                    <div class="field">
+                        <label class="label">Nova senha</label>
+                        <input type="password" name="nova_senha" class="input" placeholder="Deixe em branco para manter">
+                    </div>
+                    <div class="field">
+                        <label class="label">Confirmar nova senha</label>
+                        <input type="password" name="confirmar_senha" class="input" placeholder="Repita a nova senha">
+                    </div>
+                    <button type="submit" class="btn-primary">Salvar alterações</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- ── Coluna direita: animais e solicitações ── -->
+        <main class="perfil-main">
+
+            <!-- Meus animais -->
+            <section class="perfil-section" id="meus-animais">
+                <h3 class="perfil-section-title">🐾 Meus animais cadastrados</h3>
+
+                {% if meus_animais %}
+                <div class="mini-grid">
+                    {% for animal in meus_animais %}
+                    <div class="mini-card">
+                        <div class="mini-card-top">
+                            <span class="mini-emoji">
+                                {% if animal.especie and 'gato' in animal.especie.lower() %}🐱
+                                {% elif animal.especie and 'cachorro' in animal.especie.lower() %}🐶
+                                {% else %}🐾{% endif %}
+                            </span>
+                            <span class="animal-status {{ animal.status }} mini-status">
+                                {% if animal.status == 'adotado' %}🏠 Adotado{% else %}✅ Disponível{% endif %}
+                            </span>
+                        </div>
+                        <strong class="mini-nome">{{ animal.nome }}</strong>
+                        <span class="mini-info">{{ animal.especie or '—' }} · {{ animal.idade or '?' }} anos</span>
+                        <div class="mini-actions">
+                            <a href="{{ url_for('perfil.editar_animal', id=animal.id) }}" class="btn-edit">✏️ Editar</a>
+                            <form action="{{ url_for('perfil.excluir_animal', id=animal.id) }}" method="POST"
+                                  onsubmit="return confirm('Excluir {{ animal.nome }}?')">
+                                <button type="submit" class="btn-delete">🗑️</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="perfil-empty">Você ainda não cadastrou nenhum animal. <a href="{{ url_for('animal.cadastrar') }}">Cadastrar agora →</a></p>
+                {% endif %}
+            </section>
+
+            <!-- Solicitações recebidas (para animais que sou dono) -->
+            <section class="perfil-section" id="solicitacoes">
+                <h3 class="perfil-section-title">📋 Solicitações de adoção recebidas</h3>
+
+                {% if pendentes_para_mim %}
+                <div class="solic-list">
+                    {% for s in pendentes_para_mim %}
+                    <div class="solic-card">
+                        <div class="solic-info">
+                            <strong>{{ s.solicitante.nome }}</strong> quer adotar <strong>{{ s.animal.nome }}</strong>
+                            <small class="solic-data">{{ s.criado_em.strftime('%d/%m/%Y às %H:%M') }}</small>
+                        </div>
+                        <div class="solic-requisitos">
+                            <span class="req {% if s.tem_espaco %}req-ok{% else %}req-no{% endif %}">
+                                {% if s.tem_espaco %}✓{% else %}✗{% endif %} Tem espaço
+                            </span>
+                            <span class="req {% if s.tem_tempo %}req-ok{% else %}req-no{% endif %}">
+                                {% if s.tem_tempo %}✓{% else %}✗{% endif %} Tem tempo
+                            </span>
+                            <span class="req {% if s.tem_condicoes %}req-ok{% else %}req-no{% endif %}">
+                                {% if s.tem_condicoes %}✓{% else %}✗{% endif %} Tem condições financeiras
+                            </span>
+                        </div>
+                        {% if s.mensagem %}
+                        <p class="solic-mensagem">"{{ s.mensagem }}"</p>
+                        {% endif %}
+                        <div class="solic-actions">
+                            <form action="{{ url_for('perfil.aprovar_solicitacao', id=s.id) }}" method="POST">
+                                <button type="submit" class="btn-aprovar">✅ Aprovar</button>
+                            </form>
+                            <form action="{{ url_for('perfil.recusar_solicitacao', id=s.id) }}" method="POST">
+                                <button type="submit" class="btn-recusar">❌ Recusar</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="perfil-empty">Nenhuma solicitação pendente.</p>
+                {% endif %}
+            </section>
+
+            <!-- Minhas solicitações enviadas -->
+            <section class="perfil-section" id="minhas-solicitacoes">
+                <h3 class="perfil-section-title">📤 Minhas solicitações enviadas</h3>
+
+                {% if minhas_solicitacoes %}
+                <div class="solic-list">
+                    {% for s in minhas_solicitacoes %}
+                    <div class="solic-card">
+                        <div class="solic-info">
+                            Solicitação para adotar <strong>{{ s.animal.nome }}</strong>
+                            <small class="solic-data">{{ s.criado_em.strftime('%d/%m/%Y às %H:%M') }}</small>
+                        </div>
+                        <span class="solic-status solic-{{ s.status }}">
+                            {% if s.status == 'pendente' %}⏳ Aguardando resposta
+                            {% elif s.status == 'aprovado' %}✅ Aprovada — parabéns!
+                            {% else %}❌ Recusada{% endif %}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="perfil-empty">Você ainda não enviou nenhuma solicitação de adoção.</p>
+                {% endif %}
+            </section>
+
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>🐾 PetAdote — Todo animal merece um lar cheio de amor.</p>
+    </footer>
+</body>
+</html>

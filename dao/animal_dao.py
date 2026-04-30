@@ -45,9 +45,28 @@ class AnimalDao:
         return Animal.query.all()
     
 
-    def buscar_por_id(self):
-        return Animal.query.get(id)
-    
+    def buscar_por_id(self, id):
+        return bd.session.get(Animal, id)
+
+    def listar_por_dono(self, usuario_id):
+        return Animal.query.filter_by(usuario_id=usuario_id).order_by(Animal.id.desc()).all()
+
+    def atualizar(self, id, nome, especie, raca, idade, descricao):
+        animal = self.buscar_por_id(id)
+        if not animal:
+            return False
+        try:
+            animal.nome     = nome
+            animal.especie  = especie
+            animal.raca     = raca
+            animal.idade    = idade
+            animal.descricao = descricao
+            self.bd.session.commit()
+            return True
+        except Exception as e:
+            print(e)
+            self.bd.session.rollback()
+            return False
 
     def deletar(self, id):
         animal = self.buscar_por_id(id)

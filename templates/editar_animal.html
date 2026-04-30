@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAdote — Editar Animal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('animal.listar') }}" class="brand-link">
+                <span class="paw">🐾</span>
+                <span class="brand-name">PetAdote</span>
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('perfil.ver') }}" class="nav-link">← Voltar ao perfil</a>
+        </div>
+    </nav>
+
+    <div class="register-page">
+        <div class="register-left">
+            <div class="register-info">
+                <span class="register-icon">✏️</span>
+                <h2 class="register-title">Editar<br><em>{{ animal.nome }}</em></h2>
+                <p class="register-desc">Atualize as informações do animal. As mudanças ficarão visíveis imediatamente para os visitantes.</p>
+            </div>
+        </div>
+
+        <div class="register-right">
+            <div class="register-form-box">
+                <h3 class="form-box-title">Dados do animal</h3>
+
+                <form action="{{ url_for('perfil.editar_animal', id=animal.id) }}" method="POST" class="form">
+                    <div class="field-row">
+                        <div class="field">
+                            <label class="label">Nome <span class="required">*</span></label>
+                            <input type="text" name="nome" value="{{ animal.nome }}" class="input" required>
+                        </div>
+                        <div class="field">
+                            <label class="label">Espécie <span class="required">*</span></label>
+                            <select name="especie" class="input input-select" required>
+                                <option value="" disabled>Selecione...</option>
+                                <option value="Cachorro" {% if animal.especie == 'Cachorro' %}selected{% endif %}>🐶 Cachorro</option>
+                                <option value="Gato"     {% if animal.especie == 'Gato' %}selected{% endif %}>🐱 Gato</option>
+                                <option value="Coelho"   {% if animal.especie == 'Coelho' %}selected{% endif %}>🐰 Coelho</option>
+                                <option value="Pássaro"  {% if animal.especie == 'Pássaro' %}selected{% endif %}>🦜 Pássaro</option>
+                                <option value="Outro"    {% if animal.especie == 'Outro' %}selected{% endif %}>🐾 Outro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label class="label">Raça</label>
+                            <input type="text" name="raca" value="{{ animal.raca or '' }}" class="input" placeholder="Ex: SRD, Labrador...">
+                        </div>
+                        <div class="field">
+                            <label class="label">Idade (anos)</label>
+                            <input type="number" name="idade" value="{{ animal.idade or '' }}" class="input" min="0" max="30">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Descrição</label>
+                        <textarea name="descricao" class="input input-textarea" rows="4"
+                            placeholder="Personalidade, hábitos, necessidades especiais...">{{ animal.descricao or '' }}</textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{{ url_for('perfil.ver') }}" class="btn-cancel">Cancelar</a>
+                        <button type="submit" class="btn-primary">Salvar alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>🐾 PetAdote — Todo animal merece um lar cheio de amor.</p>
+    </footer>
+</body>
+</html>

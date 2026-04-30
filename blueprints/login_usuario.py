@@ -52,8 +52,7 @@ def menu_principal():
      print('Usuario logado', current_user.nome)
      return render_template('menu_principal.html')
     
-
-
+    
 @bp_usuario.route('/logout')
 def logout():
     logout_user()

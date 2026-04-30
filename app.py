@@ -1,8 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, redirect, url_for
 from blueprints.login_usuario import bp_usuario
 from blueprints.animal import bp_animal
+from blueprints.perfil import bp_perfil
 from extensao import bd, login_manager
 from models.usuario import Usuario
+import models.solicitacao  
 
 
 def criar_servidor():
@@ -17,7 +19,7 @@ def criar_servidor():
 
     login_manager.init_app(app)
     login_manager.login_view = 'login_usuario.login'
-    login_manager.login_message = 'Faça login para acessar essa página.'    
+    login_manager.login_message = 'Faça login para acessar essa página.'
 
     @login_manager.user_loader
     def carregar_usuario(usuario_id):
@@ -25,10 +27,11 @@ def criar_servidor():
 
     app.register_blueprint(bp_usuario)
     app.register_blueprint(bp_animal)
+    app.register_blueprint(bp_perfil)
 
     @app.route('/')
     def pagina_inicial():
-        return render_template('login_usuario.html')
+        return redirect(url_for('animal.listar'))
 
     return app
 
