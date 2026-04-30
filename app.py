@@ -9,16 +9,15 @@ def criar_servidor():
     app = Flask(__name__)
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost:5432/projetoinfoesociedade'
-    app.config['SECRET_KEY'] = 'troque-isso-em-producao'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_ECHO'] = False
+    app.config['SECRET_KEY'] = 'KJHJH3w42#n!'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+    app.config['SQLALCHEMY_ECHO'] = True
 
     bd.init_app(app)
 
     login_manager.init_app(app)
     login_manager.login_view = 'login_usuario.login'
-    login_manager.login_message = 'Faça login para acessar essa página.'
-
+    login_manager.login_message = 'Faça login para acessar essa página.'    
 
     @login_manager.user_loader
     def carregar_usuario(usuario_id):

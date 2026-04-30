@@ -22,7 +22,8 @@ class AnimalDao:
             self.bd.session.add(animal)
             self.bd.session.commit()
             return True
-        except:
+        except Exception as e:
+            print(e)
             self.bd.session.rollback()
             return False    
     
@@ -55,6 +56,7 @@ class AnimalDao:
                 self.bd.session.delete(animal)
                 self.bd.session.commit()
                 return True
-            except:
+            except Exception as e:
+                print(e)
                 self.bd.session.rollback()
         return False

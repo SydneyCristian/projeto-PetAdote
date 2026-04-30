@@ -18,6 +18,7 @@ class UsuarioDao:
             self.bd.session.commit()
             return True
         except Exception as e:
+            print(e)
             self.bd.session.rollback()
             return False
         
@@ -38,7 +39,8 @@ class UsuarioDao:
             try:
                 self.bd.session.commit()
                 return True
-            except:
+            except Exception as e:
+                print(e)
                 self.bd.session.rollback()
         return False
     
@@ -49,6 +51,7 @@ class UsuarioDao:
                 self.bd.session.delete(usuario)
                 self.bd.session.commit()
                 return True
-            except:
+            except Exception as e:
+                print(e)
                 self.bd.session.rollback()
         return False
